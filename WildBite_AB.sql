@@ -10,14 +10,14 @@
     
     	CREATE TABLE Föda(
     	FödaID INT PRIMARY KEY AUTO_INCREMENT,
-    	Typ VARCHAR (255),
-    	Säsong VARCHAR (255)
+    	Typ VARCHAR (255) NOT NULL,
+    	Säsong VARCHAR (255) NOT NULL
     	);
     
     	CREATE TABLE LivsMiljÖ(
     	MiljöID INT PRIMARY KEY AUTO_INCREMENT,
-    	Typ VARCHAR (255),
-    	Beskrivning VARCHAR (255)
+    	Typ VARCHAR (255) NOT NULL,
+    	Beskrivning VARCHAR (255) NOT NULL
     	);
     
     
@@ -25,24 +25,24 @@
 		
 		
 	Djur_FödaID INT PRIMARY KEY AUTO_INCREMENT,
-	Vetenskapligt_Namn VARCHAR (255),
-	FödaID INT,
+	Vetenskapligt_Namn VARCHAR (255) NOT NULL,
+	FödaID INT NOT NULL,
 	FOREIGN KEY(Vetenskapligt_Namn) REFERENCES Djurdata(Vetenskapligt_Namn),
 	FOREIGN KEY (FödaID) REFERENCES Föda(FödaID)
 		);
 	    
 	CREATE TABLE Djur_LivsMiljö(
 	Djur_LivsMiljö int PRIMARY KEY AUTO_INCREMENT,
-	Vetenskapligt_Namn VARCHAR(255),
-	MiljöID INT,
+	Vetenskapligt_Namn VARCHAR(255) NOT NULL,
+	MiljöID INT NOT NULL,
 	FOREIGN KEY (Vetenskapligt_Namn)REFERENCES Djurdata(Vetenskapligt_Namn),
 	FOREIGN KEY (MiljöID) REFERENCES LivsMiljö(MiljöID)
 	);
 	    
 	CREATE TABLE Föda_LivsMiljö(
 	Föda_LivsMiljö INT PRIMARY KEY AUTO_INCREMENT,
-	FödaID INT,
-	MiljöID INT,
+	FödaID INT NOT NULL,
+	MiljöID INT NOT NULL,
 	FOREIGN KEY(FödaID)REFERENCES Föda(FödaID),
 	FOREIGN KEY(MiljöID)REFERENCES LivsMiljö(MiljöID)
 	);
@@ -68,7 +68,27 @@
     
     
     
-    
+    	CREATE INDEX idx_DjurNamn ON Djurdata(Namn);
+    	CREATE INDEX idx_föda ON Föda(Typ);
+    	CREATE INDEX idx_Miljö ON LivsMiljö(Typ);
+
+	DELIMITER $$ -- nu tar man select frågan som är skrivet på rad 179 och istället skapa ett automation, man slipper skriva hela koden.
+	CREATE PROCEDURE Djur_antalföda()
+    	BEGIN
+	SELECT Djurdata.namn as DJUR,
+	COUNT(DISTINCT Föda.typ) as antal 
+	From 
+	Djurdata
+	Join Djur_Föda ON Djurdata.Vetenskapligt_Namn = Djur_Föda.Vetenskapligt_Namn
+	JOIN 
+	Föda ON Djur_Föda.FödaID = Föda.FödaID
+	GROUP BY Djurdata.namn;
+	
+    	END $$
+    	DELIMITER ;
+	
+	call djur_antalföda
+
     
     
 	    -- Lägger in all data i tabellerna.
