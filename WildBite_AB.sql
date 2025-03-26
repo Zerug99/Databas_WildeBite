@@ -72,27 +72,38 @@
     	CREATE INDEX idx_föda ON Föda(Typ);
     	CREATE INDEX idx_Miljö ON LivsMiljö(Typ);
 
-	DELIMITER $$ -- nu tar man select frågan som är skrivet på rad 179 och istället skapa ett automation, man slipper skriva hela koden.
-	CREATE PROCEDURE Djur_antalföda()
-    	BEGIN
-	SELECT Djurdata.namn as DJUR,
-	COUNT(DISTINCT Föda.typ) as antal 
-	From 
-	Djurdata
-	Join Djur_Föda ON Djurdata.Vetenskapligt_Namn = Djur_Föda.Vetenskapligt_Namn
+	
+    DELIMITER $$
+
+CREATE PROCEDURE djur_antalföda()
+BEGIN
+	SELECT 
+		Djurdata.namn AS DJUR,
+		COUNT(DISTINCT Föda.typ) AS antal 
+	FROM 
+		Djurdata
 	JOIN 
-	Föda ON Djur_Föda.FödaID = Föda.FödaID
-	GROUP BY Djurdata.namn;
+		Djur_Föda ON Djurdata.Vetenskapligt_Namn = Djur_Föda.Vetenskapligt_Namn
+	JOIN 
+		Föda ON Djur_Föda.FödaID = Föda.FödaID
+	GROUP BY 
+		Djurdata.namn;
+END $$
+
+DELIMITER ;
+
+
+ALTER TABLE Djurdata
+ADD CONSTRAINT tre_klass
+CHECK (Klass IN ('Däggdjur', 'Fisk', 'Fågel')
+);
+
 	
-    	END $$
-    	DELIMITER ;
-	
-	call djur_antalföda
+
 
     
     
-	    -- Lägger in all data i tabellerna.
-	INSERT INTO Djurdata(Vetenskapligt_namn, Namn, Klass) VALUES
+  INSERT INTO Djurdata(Vetenskapligt_namn, Namn, Klass) VALUES   -- Lägger in all data i tabellerna
 	("Alces alces", "Älg", "Däggdjur"),
 	("Canis lupus", "Varg", "Däggdjur"),
 	("Esox lucius", "Gädda", "Fisk"),
@@ -105,7 +116,7 @@
     
 	INSERT INTO Föda (Typ, Säsong) VALUES 
 	("Bär", "Sommar"),
-	("Kvader","Året runt"),
+	("Kadaver","Året runt"),
 	("Småfisk", "Året runt"),
 	("Plankton", "Sommar"),
     	("Frön", "Året runt"),
@@ -205,15 +216,18 @@
 	Föda ON Djur_Föda.FödaID = Föda.FödaID
 	GROUP BY Djurdata.namn;
 	  
+
+
+	SELECT user, host FROM mysql.user;
+      
+	SHOW INDEX FROM djurdata;
+      
+      
+	SELECT USER(), CURRENT_USER();
+      
+
 	  
-	  
-	
-	
-	 
-	
-	   
-	
-	    
-	    
+	CALL djur_antalföda();
+
 	    
 	    
