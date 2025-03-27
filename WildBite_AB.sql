@@ -196,7 +196,6 @@ CHECK (Klass IN ('Däggdjur', 'Fisk', 'Fågel')
 	Djurdata
 	JOIN 
 	Djur_Föda ON Djurdata.Vetenskapligt_Namn = Djur_Föda.Vetenskapligt_Namn
-	
 	JOIN 
 	Föda ON Djur_Föda.FödaID = Föda.FödaID;
 	  
@@ -222,10 +221,25 @@ CHECK (Klass IN ('Däggdjur', 'Fisk', 'Fågel')
       
 	SHOW INDEX FROM djurdata;
       
+      	SELECT USER(), CURRENT_USER();
       
-	SELECT USER(), CURRENT_USER();
-      
-
+	  Djurdata dj
+	LEFT JOIN 
+	    Djur_Föda df ON dj.Vetenskapligt_Namn = df.Vetenskapligt_Namn
+	LEFT JOIN 
+	    Föda fo ON df.FödaID = fo.FödaID
+	LEFT JOIN 
+	    Föda_LivsMiljö fl ON fo.FödaID = fl.FödaID
+	LEFT JOIN 
+	    LivsMiljö flm ON fl.MiljöID = flm.MiljöID
+	LEFT JOIN 
+	    Djur_LivsMiljö dlm ON dj.Vetenskapligt_Namn = dlm.Vetenskapligt_Namn
+	LEFT JOIN 
+	    LivsMiljö lm ON dlm.MiljöID = lm.MiljöID
+	WHERE 
+	    dj.Namn = 'Älg'
+	GROUP BY 
+	    dj.Vetenskapligt_Namn, dj.Namn;  -- Detta vissade jag efter presentationen till dig.
 	  
 	CALL djur_antalföda();
 
