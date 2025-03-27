@@ -1,9 +1,0 @@
-CREATE USER 'personal'@'localhost' IDENTIFIED BY 'personal';
-CREATE USER 'forskare'@'localhost' IDENTIFIED BY 'forskare';
-CREATE USER 'support'@'localhost' IDENTIFIED BY 'support';
-CREATE USER 'admin'@'localhost' IDENTIFIED BY 'admin';
-
-GRANT SELECT ON Wildbite_AB.* TO 'personal'@'localhost';
-GRANT SELECT, INSERT ON Wildbite_AB.* TO 'forskare'@'localhost';
-GRANT DELETE ON Wildbite_AB.* TO 'support'@'localhost';
-GRANT ALL PRIVILEGES ON Wildbite_AB.* TO 'admin'@'localhost' WITH GRANT OPTION;
